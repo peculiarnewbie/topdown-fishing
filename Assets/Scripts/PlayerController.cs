@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
 
     [SerializeField] float moveSpeed;
     GameState gameState;
+    InputAction moveAction;
+
 
     private void Start()
     {
