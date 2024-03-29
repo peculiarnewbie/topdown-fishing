@@ -5,17 +5,26 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    Vector3 pos;
+    [SerializeField] float moveSpeed;
+    GameState gameState;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        transform.position = new Vector3(0, 5, 1);
+        gameState = GameState.moving;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (gameState == GameState.moving)
+        {
+            Move();
+        }
+    }
 
+    void Move()
+    {
+        Vector2 playerInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        Vector2 totalMove = playerInput * moveSpeed;
+        transform.position = new Vector3(transform.position.x + totalMove.x, transform.position.y, transform.position.z + totalMove.y);
     }
 }
