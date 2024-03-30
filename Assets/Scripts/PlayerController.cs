@@ -7,16 +7,14 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
 
-    [SerializeField] float moveSpeed;
+    [SerializeField] float moveSpeed = 1;
     GameState gameState = GameState.moving;
     InputAction moveAction;
     InputAction fishAction;
 
-
     // Fishing
     bool castStarted = false;
-    [SerializeField] RectTransform castFillTransform;
-    float castFillSize = 0;
+    [SerializeField] CastUIController castUIController;
 
     private void Start()
     {
@@ -36,14 +34,11 @@ public class PlayerController : MonoBehaviour
             if (!castStarted)
             {
                 castStarted = true;
+                castUIController.StartCasting();
             }
             else
             {
-                if (castFillSize == 200f) return;
-                castFillSize += Time.deltaTime * 100;
-                if (castFillSize > 200f) castFillSize = 200f;
-                castFillTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, castFillSize);
-
+                castUIController.PowerUp();
             }
         }
         else
@@ -51,8 +46,7 @@ public class PlayerController : MonoBehaviour
             if (castStarted)
             {
                 castStarted = false;
-                castFillSize = 0;
-                castFillTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, castFillSize);
+                castUIController.StopCasting();
             }
         }
     }
