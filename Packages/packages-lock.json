@@ -61,13 +61,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.inputsystem": {
-      "version": "1.7.0",
+      "version": "file:/home/bolt/git/game/unity-packages/InputSystem/Packages/com.unity.inputsystem",
       "depth": 0,
-      "source": "registry",
+      "source": "local",
       "dependencies": {
         "com.unity.modules.uielements": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
+      }
     },
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
