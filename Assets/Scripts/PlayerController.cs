@@ -13,8 +13,8 @@ public class PlayerController : MonoBehaviour
     InputAction fishAction;
 
     // Fishing
-    bool castStarted = false;
-    [SerializeField] CastUIController castUIController;
+    FishingPhase fishingPhase = FishingPhase.Start;
+    [SerializeField] CastController castController;
 
     private void Start()
     {
@@ -29,26 +29,33 @@ public class PlayerController : MonoBehaviour
             Move();
         }
 
-        if (fishAction.IsPressed())
+        if (fishAction.phase == InputActionPhase.Started)
         {
-            if (!castStarted)
+            if (fishingPhase == FishingPhase.Start)
             {
-                castStarted = true;
-                castUIController.StartCasting();
+                fishingPhase = FishingPhase.PowerUp;
+                castController.StartPowerUp();
             }
-            else
+            else if (fishingPhase == FishingPhase.Casted)
             {
-                castUIController.PowerUp();
+                bool pulled = castController.PullCast();
+                Debug.Log(pulled);
+                fishingPhase = FishingPhase.Pulled;
             }
+        }
+        else if (fishAction.inProgress)
+        {
+            castController.PowerUp();
         }
         else
         {
-            if (castStarted)
+            if (fishingPhase == FishingPhase.PowerUp)
             {
-                castStarted = false;
-                castUIController.StopCasting();
+                fishingPhase = FishingPhase.Casted;
+                castController.StartCasting();
             }
         }
+
     }
 
     void Move()

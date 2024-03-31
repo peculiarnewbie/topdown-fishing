@@ -10,3 +10,12 @@ public enum GameState
     moving,
     fishing
 }
+
+public enum FishingPhase
+{
+    Start,
+    PowerUp,
+    Casted,
+    Pulled
+
+}
