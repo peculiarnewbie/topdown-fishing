@@ -16,6 +16,7 @@ public class CastController : MonoBehaviour
     [SerializeField] Transform fishTransform;
     [SerializeField] float waitTime = 1;
 
+    [SerializeField] Fish fish;
     bool bitten = false;
 
     void Start()
@@ -54,11 +55,9 @@ public class CastController : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
 
-        fishTransform.position = bobber.transform.position;
-        fishTransform.gameObject.SetActive(true);
 
-        int degree = Random.Range(0, 360);
-        FishAppeared(degree);
+        Vector2 rand = Random.insideUnitCircle.normalized;
+        fish.Spawn(rand, bobber.transform.position);
 
         float addedTime = Random.Range(1, 4);
         yield return new WaitForSeconds(addedTime);

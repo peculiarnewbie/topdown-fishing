@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
                 fishingPhase = FishingPhase.Pulled;
             }
         }
-        else if (fishAction.inProgress)
+        else if (fishAction.IsPressed())
         {
             castController.PowerUp();
         }
