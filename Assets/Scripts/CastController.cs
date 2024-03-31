@@ -17,6 +17,7 @@ public class CastController : MonoBehaviour
     [SerializeField] float waitTime = 1;
 
     [SerializeField] Fish fish;
+    [SerializeField] GameObject caughtVfx;
     bool bitten = false;
 
     void Start()
@@ -55,9 +56,7 @@ public class CastController : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
 
-
-        Vector2 rand = Random.insideUnitCircle.normalized;
-        fish.Spawn(rand, bobber.transform.position);
+        FishAppeared();
 
         float addedTime = Random.Range(1, 4);
         yield return new WaitForSeconds(addedTime);
@@ -68,13 +67,18 @@ public class CastController : MonoBehaviour
         yield return null;
     }
 
-    void FishAppeared(int degree)
+    void FishAppeared()
     {
+        Vector2 rand = Random.insideUnitCircle.normalized;
+        fish.Spawn(rand, bobber.transform.position);
     }
 
     void FishBites()
     {
+        Debug.Log("Fish bitten");
         bitten = true;
+        GameObject vfx = Instantiate(caughtVfx, bobber.transform.position, Quaternion.identity);
+        StartCoroutine(DestroyWithDelay(2f, vfx));
     }
 
 
@@ -82,5 +86,12 @@ public class CastController : MonoBehaviour
     {
         if (bitten) return true;
         else return false;
+    }
+
+    IEnumerator DestroyWithDelay(float delay, GameObject obj)
+    {
+        yield return new WaitForSeconds(delay);
+
+        Destroy(obj);
     }
 }

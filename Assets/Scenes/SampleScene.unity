@@ -277,7 +277,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &353955905
 Transform:
   m_ObjectHideFlags: 0
@@ -524,6 +524,7 @@ MonoBehaviour:
   fishTransform: {fileID: 353955905}
   waitTime: 3
   fish: {fileID: 353955906}
+  caughtVfx: {fileID: 1089352418356894231, guid: 393e145b3b32767ceb40588e5354d933, type: 3}
 --- !u!1 &684654729
 GameObject:
   m_ObjectHideFlags: 0
