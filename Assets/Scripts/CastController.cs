@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CastController : MonoBehaviour
 {
+    [Header("Casting")]
     [SerializeField] GameObject castUICanvas;
     [SerializeField] RectTransform castFillTransform;
     float castFillSize = 0;
@@ -13,6 +14,8 @@ public class CastController : MonoBehaviour
     [SerializeField] float maxRange = 10f;
     [SerializeField] float minRange = 2f;
     [SerializeField] float castSpeed = 100;
+
+    [Header("Fishing")]
     [SerializeField] Bobber bobber;
     [SerializeField] Transform fishTransform;
     [SerializeField] float waitTime = 1;
@@ -23,6 +26,8 @@ public class CastController : MonoBehaviour
     bool bitten = false;
     Coroutine fishCoroutine;
     [SerializeField] GameObject poleModel;
+
+    [SerializeField] AudioManager audioManager;
 
     void Start()
     {
@@ -41,6 +46,7 @@ public class CastController : MonoBehaviour
 
     public void StartCasting()
     {
+        bitten = false;
 
         castUICanvas.SetActive(false);
         bobber.Cast(new Vector2(0, minRange + ((maxRange - minRange) * castFillSize / maxFill)));
@@ -48,6 +54,8 @@ public class CastController : MonoBehaviour
         fish.gameObject.SetActive(false);
         if (fishCoroutine != null) StopCoroutine(fishCoroutine);
         fishCoroutine = StartCoroutine(WaitForFish(waitTime));
+
+        audioManager.PlayCast();
     }
 
     public void PowerUp()
@@ -85,6 +93,8 @@ public class CastController : MonoBehaviour
         bitten = true;
         vfxInstance = Instantiate(caughtVfx, bobber.transform.position, Quaternion.identity);
         Destroy(vfxInstance, 2f);
+
+        audioManager.PlaySplash();
     }
 
 
@@ -110,11 +120,16 @@ public class CastController : MonoBehaviour
     public void PullFish()
     {
         bobber.Pull();
+
+        audioManager.PlayCast();
     }
 
     public void RestartBobberPosition()
     {
         bobber.transform.position = new Vector3(0, 0, 0);
+
+        fish.transform.SetParent(null);
+        fish.transform.position = new Vector3(0, -1.05f, 0);
     }
 
     async public void SetPoleModelActive(bool active, int delay = 0)
