@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     // Fishing
     FishingPhase fishingPhase = FishingPhase.Start;
     [SerializeField] CastController castController;
+    [SerializeField] Animator playerAnimator;
 
     private void Start()
     {
@@ -38,8 +39,11 @@ public class PlayerController : MonoBehaviour
             else if (fishingPhase == FishingPhase.Casted)
             {
                 bool pulled = castController.PullCast();
-                Debug.Log(pulled);
-                fishingPhase = FishingPhase.Pulled;
+                if (pulled)
+                {
+                    playerAnimator.SetTrigger("Pull");
+                    fishingPhase = FishingPhase.Pulled;
+                }
             }
         }
         else if (fishAction.IsPressed())
@@ -50,8 +54,7 @@ public class PlayerController : MonoBehaviour
         {
             if (fishingPhase == FishingPhase.PowerUp)
             {
-                fishingPhase = FishingPhase.Casted;
-                castController.StartCasting();
+                playerAnimator.SetTrigger("Cast");
             }
         }
 
@@ -62,5 +65,11 @@ public class PlayerController : MonoBehaviour
         Vector2 playerInput = moveAction.ReadValue<Vector2>();
         Vector2 totalMove = playerInput * moveSpeed * Time.deltaTime;
         transform.position = new Vector3(transform.position.x + totalMove.x, transform.position.y, transform.position.z + totalMove.y);
+    }
+
+    public void StartCasting()
+    {
+        fishingPhase = FishingPhase.Casted;
+        castController.StartCasting();
     }
 }

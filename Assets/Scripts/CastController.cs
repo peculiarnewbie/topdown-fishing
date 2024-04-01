@@ -18,12 +18,16 @@ public class CastController : MonoBehaviour
 
     [SerializeField] Fish fish;
     [SerializeField] GameObject caughtVfx;
+    GameObject vfxInstance;
     bool bitten = false;
+    Coroutine fishCoroutine;
+    [SerializeField] GameObject poleModel;
 
     void Start()
     {
         castUICanvas.SetActive(false);
         maxFill = castFillTransform.rect.width;
+        poleModel.SetActive(false);
     }
 
     public void StartPowerUp()
@@ -35,11 +39,13 @@ public class CastController : MonoBehaviour
 
     public void StartCasting()
     {
+
         castUICanvas.SetActive(false);
+        poleModel.SetActive(true);
         bobber.Cast(new Vector2(0, minRange + ((maxRange - minRange) * castFillSize / maxFill)));
 
         waitTime += bobber.GetCastTime();
-        StartCoroutine(WaitForFish(waitTime));
+        fishCoroutine = StartCoroutine(WaitForFish(waitTime));
     }
 
     public void PowerUp()
@@ -63,7 +69,6 @@ public class CastController : MonoBehaviour
 
         FishBites();
 
-
         yield return null;
     }
 
@@ -75,23 +80,36 @@ public class CastController : MonoBehaviour
 
     void FishBites()
     {
-        Debug.Log("Fish bitten");
         bitten = true;
-        GameObject vfx = Instantiate(caughtVfx, bobber.transform.position, Quaternion.identity);
-        StartCoroutine(DestroyWithDelay(2f, vfx));
+        vfxInstance = Instantiate(caughtVfx, bobber.transform.position, Quaternion.identity);
+        Destroy(vfxInstance, 2f);
     }
 
 
     public bool PullCast()
     {
-        if (bitten) return true;
-        else return false;
+        if (bitten)
+        {
+            fish.transform.SetParent(bobber.transform);
+            Destroy(vfxInstance);
+            return true;
+        }
+        else
+        {
+            if (!fish.isActiveAndEnabled) return false;
+            StopCoroutine(fishCoroutine);
+            fishCoroutine = StartCoroutine(WaitForFish(waitTime));
+            fish.Run();
+            return false;
+        }
     }
 
-    IEnumerator DestroyWithDelay(float delay, GameObject obj)
+    public void PullFish()
     {
-        yield return new WaitForSeconds(delay);
 
-        Destroy(obj);
+        bobber.Pull();
+        StartCoroutine(Helpers.SetActiveWithDelay(poleModel, false, 1f));
     }
+
+
 }

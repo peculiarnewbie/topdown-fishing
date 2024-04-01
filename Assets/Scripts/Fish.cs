@@ -10,6 +10,8 @@ public class Fish : MonoBehaviour
     [SerializeField] Material whiteMat;
     [SerializeField] Material pinkMat;
 
+    Coroutine moveCoroutine;
+
     public void Spawn(Vector2 offset, Vector3 targetPosition)
     {
         Vector3 correctedTargetPosition = new Vector3(targetPosition.x, transform.position.y, targetPosition.z);
@@ -21,7 +23,18 @@ public class Fish : MonoBehaviour
         gameObject.SetActive(true);
 
         StartCoroutine(FadeIn());
-        StartCoroutine(MoveTowards(correctedTargetPosition));
+
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        moveCoroutine = StartCoroutine(MoveTowards(correctedTargetPosition));
+    }
+
+    public void Run()
+    {
+        Vector3 runTarget = new Vector3(transform.position.x, transform.position.y, transform.position.z + 12f);
+        transform.LookAt(runTarget);
+
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        moveCoroutine = StartCoroutine(MoveTowards(runTarget, 10f));
     }
 
     IEnumerator FadeIn()
@@ -41,11 +54,11 @@ public class Fish : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator MoveTowards(Vector3 targetPosition)
+    IEnumerator MoveTowards(Vector3 targetPosition, float speed = 0.2f)
     {
         while (Vector3.Distance(transform.position, targetPosition) > 0.5f)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * 0.2f);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * speed);
             yield return null;
         }
         yield return null;
