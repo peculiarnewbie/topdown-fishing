@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class CastController : MonoBehaviour
@@ -28,6 +29,7 @@ public class CastController : MonoBehaviour
         castUICanvas.SetActive(false);
         maxFill = castFillTransform.rect.width;
         poleModel.SetActive(false);
+        waitTime += bobber.GetCastTime();
     }
 
     public void StartPowerUp()
@@ -41,10 +43,10 @@ public class CastController : MonoBehaviour
     {
 
         castUICanvas.SetActive(false);
-        poleModel.SetActive(true);
         bobber.Cast(new Vector2(0, minRange + ((maxRange - minRange) * castFillSize / maxFill)));
 
-        waitTime += bobber.GetCastTime();
+        fish.gameObject.SetActive(false);
+        if (fishCoroutine != null) StopCoroutine(fishCoroutine);
         fishCoroutine = StartCoroutine(WaitForFish(waitTime));
     }
 
@@ -92,6 +94,7 @@ public class CastController : MonoBehaviour
         {
             fish.transform.SetParent(bobber.transform);
             Destroy(vfxInstance);
+            SetPoleModelActive(false, 2000);
             return true;
         }
         else
@@ -106,9 +109,18 @@ public class CastController : MonoBehaviour
 
     public void PullFish()
     {
-
         bobber.Pull();
-        StartCoroutine(Helpers.SetActiveWithDelay(poleModel, false, 1f));
+    }
+
+    public void RestartBobberPosition()
+    {
+        bobber.transform.position = new Vector3(0, 0, 0);
+    }
+
+    async public void SetPoleModelActive(bool active, int delay = 0)
+    {
+        await Task.Delay(delay);
+        poleModel.SetActive(active);
     }
 
 

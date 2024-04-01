@@ -41,6 +41,7 @@ public class Bobber : MonoBehaviour
         animator.SetTrigger("Cast");
         targetPos = target;
         lerpTime = 0;
+        pulling = false;
     }
 
     public void Pull()

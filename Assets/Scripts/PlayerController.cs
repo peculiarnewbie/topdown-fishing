@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -38,11 +39,13 @@ public class PlayerController : MonoBehaviour
             }
             else if (fishingPhase == FishingPhase.Casted)
             {
+                playerAnimator.ResetTrigger("Cast");
                 bool pulled = castController.PullCast();
                 if (pulled)
                 {
                     playerAnimator.SetTrigger("Pull");
                     fishingPhase = FishingPhase.Pulled;
+                    RestartCasting(3000);
                 }
             }
         }
@@ -54,6 +57,7 @@ public class PlayerController : MonoBehaviour
         {
             if (fishingPhase == FishingPhase.PowerUp)
             {
+                castController.SetPoleModelActive(true);
                 playerAnimator.SetTrigger("Cast");
             }
         }
@@ -67,9 +71,18 @@ public class PlayerController : MonoBehaviour
         transform.position = new Vector3(transform.position.x + totalMove.x, transform.position.y, transform.position.z + totalMove.y);
     }
 
+    async void RestartCasting(int delay)
+    {
+        await Task.Delay(delay);
+        fishingPhase = FishingPhase.Start;
+        castController.RestartBobberPosition();
+    }
+
+
     public void StartCasting()
     {
         fishingPhase = FishingPhase.Casted;
         castController.StartCasting();
     }
+
 }
